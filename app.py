@@ -22,6 +22,7 @@ st.title("Object Detection And Tracking using YOLOv8")
 
 # Sidebar
 st.sidebar.header("ML Model Config")
+st.sidebar.subheader(settings.DETECTION_MODEL)
 
 # Model Options
 model_type = st.sidebar.radio(
