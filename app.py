@@ -8,34 +8,31 @@ import streamlit as st
 # Local Modules
 import settings
 import helper
-
+import os
 # Setting page layout
 st.set_page_config(
-    page_title="Object Detection using YOLOv8",
+    page_title="Object Detection & Segmentation Demo",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # Main page heading
-st.title("Object Detection And Tracking using YOLOv8")
+st.title("Object Detection & Segmentation Demo")
 
 # Sidebar
-st.sidebar.header("ML Model Config")
-st.sidebar.subheader(settings.DETECTION_MODEL)
+st.sidebar.header("Configuration")
 
-# Model Options
-model_type = st.sidebar.radio(
-    "Select Task", ['Detection', 'Segmentation'])
+# Model Selection Dropdown
+model_options = {k:v for k,v in [[i.name, i.path] for i in os.scandir(settings.DETECTION_MODEL_DIR)]}
 
-confidence = float(st.sidebar.slider(
-    "Select Model Confidence", 25, 100, 40)) / 100
+selected_model = st.sidebar.selectbox("Select Model", options=list(model_options.keys()))
+model_path = Path(model_options[selected_model])
 
-# Selecting Detection Or Segmentation
-if model_type == 'Detection':
-    model_path = Path(settings.DETECTION_MODEL)
-elif model_type == 'Segmentation':
-    model_path = Path(settings.SEGMENTATION_MODEL)
+# Task Options (Detection or Segmentation)
+model_type = st.sidebar.radio("Select Task", ['Detection', 'Segmentation'])
+
+confidence = float(st.sidebar.slider("Select Model Confidence", 25, 100, 40)) / 100
 
 # Load Pre-trained ML Model
 try:
@@ -92,7 +89,6 @@ if source_radio == settings.IMAGE:
                         for box in boxes:
                             st.write(box.data)
                 except Exception as ex:
-                    # st.write(ex)
                     st.write("No image is uploaded yet!")
 
 elif source_radio == settings.VIDEO:
